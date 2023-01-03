@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import Entry
 from tkinter.messagebox import showinfo
+import numpy as np
 
 root = tk.Tk()
 
@@ -39,22 +40,38 @@ y_label.grid(column=1, row = 2)
 r = 0
 for i in range(10):
     frame.rowconfigure(r, weight=1)
-    ttk.Entry(frame).grid(row = r, column = 0)
-    ttk.Entry(frame).grid(row = r, column = 1)
+    globals()[f"x{i + 1}"] = ttk.Entry(frame)
+    globals()[f"x{i + 1}"].grid(row = r, column = 0)
+    globals()[f"y{i + 1}"] = ttk.Entry(frame)
+    globals()[f"y{i + 1}"].grid(row = r, column = 1)
     r += 1
 
 frame.grid(column = 0, row = 3, columnspan = 2, sticky = "N")
 
-more = tk.Button(root, text="I have more values", command=lambda: more())
+more = tk.Button(root, text="I have more values", command=lambda: get_data_from_xlsx())
 more.grid(column=0, row = 4, columnspan = 2, sticky = "N")
 
-calculate = tk.Button(root, text="Calculate", command=lambda: calculate())
+calculate = tk.Button(root, text="Calculate", command=lambda: get_data_from_widgets())
 calculate.grid(column=0, row = 5, columnspan = 2)
 
 learn = tk.Button(root, text="Learn about linear regression", command=lambda: learn())
 learn.grid(column=0, row = 6, columnspan = 2)
 
-def more():
+
+def get_data_from_widgets():
+    x_list = []
+    y_list = []
+    for i in range(10):
+        if (globals()[f"x{i + 1}"].get() != "") and (globals()[f"y{i + 1}"].get() != ""):
+            x_list.append(globals()[f"x{i + 1}"].get())
+            y_list.append(globals()[f"y{i + 1}"].get())
+    
+    x_list = np.array(x_list).reshape((-1, 1))
+    y_list = np.array(y_list)
+    return x_list, y_list
+
+
+def get_data_from_xlsx():
     pass
 
 def calculate():
