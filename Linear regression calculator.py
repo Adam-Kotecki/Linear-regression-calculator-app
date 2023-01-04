@@ -2,7 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import Entry
 from tkinter.messagebox import showinfo
+from tkinter import filedialog
 import numpy as np
+import openpyxl
 
 root = tk.Tk()
 
@@ -72,7 +74,15 @@ def get_data_from_widgets():
 
 
 def get_data_from_xlsx():
-    pass
+    path = filedialog.askopenfilename()
+    try:
+        workbook = openpyxl.load_workbook(path)
+    except:
+       tk.messagebox.showinfo(message="File with wrong format selected. Please select xlsx or xlsm.")
+       return
+    
+    sheet = workbook.active
+    
 
 def calculate():
     pass
