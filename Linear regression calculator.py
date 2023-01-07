@@ -16,7 +16,6 @@ root.geometry('400x500')
 root.resizable(False, False)
 root.title('Linear regression calculator')
 
-# 4 columns:
 root.columnconfigure(0, weight=1)
 root.columnconfigure(1, weight=1)
 
@@ -69,9 +68,15 @@ def get_data_from_widgets():
     y_list = []
     for i in range(10):
         if (globals()[f"x{i + 1}"].get() != "") and (globals()[f"y{i + 1}"].get() != ""):
-            x_list.append(globals()[f"x{i + 1}"].get())
-            y_list.append(globals()[f"y{i + 1}"].get())
-    
+            try:
+                float(globals()[f"x{i + 1}"].get())
+                float(globals()[f"y{i + 1}"].get())
+                x_list.append(globals()[f"x{i + 1}"].get())
+                y_list.append(globals()[f"y{i + 1}"].get())
+            except:
+                tk.messagebox.showinfo(message="All provided values should be numeric.")
+                return
+            
     x_list = np.array(x_list).reshape((-1, 1))
     y_list = np.array(y_list)
     calculate(x_list, y_list)
@@ -133,7 +138,7 @@ def calculate(x, y):
       widgets.destroy()
       
     root.rowconfigure(0, weight=1)
-    root.rowconfigure(1, weight=6)
+    root.rowconfigure(1, weight=5)
     root.rowconfigure(2, weight=1)
     root.rowconfigure(3, weight=1)
     root.rowconfigure(4, weight=1)
@@ -143,7 +148,7 @@ def calculate(x, y):
     label_title = tk.Label(root, text="Calculated results:")
     label_title.grid(row = 0)
     
-    fig = Figure(figsize = (4, 4))
+    fig = Figure(figsize = (6, 4))
     a = fig.add_subplot(111)
     a.scatter(x, y) 
     canvas = FigureCanvasTkAgg(fig, master = root)  
