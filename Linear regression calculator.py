@@ -16,52 +16,58 @@ root.geometry('400x500')
 root.resizable(False, False)
 root.title('Linear regression calculator')
 
-root.columnconfigure(0, weight=1)
-root.columnconfigure(1, weight=1)
 
-root.rowconfigure(0, weight=1)
-root.rowconfigure(1, weight=1)
-root.rowconfigure(2, weight=1)
-root.rowconfigure(3, weight=1)
-root.rowconfigure(4, weight=1)
-root.rowconfigure(5, weight=1)
-root.rowconfigure(6, weight=4)
+def main_view():
+    root.columnconfigure(0, weight=1)
+    root.columnconfigure(1, weight=1)
+    
+    root.rowconfigure(0, weight=1)
+    root.rowconfigure(1, weight=1)
+    root.rowconfigure(2, weight=1)
+    root.rowconfigure(3, weight=1)
+    root.rowconfigure(4, weight=1)
+    root.rowconfigure(5, weight=1)
+    root.rowconfigure(6, weight=4)
+    
+    frame = ttk.Frame(root)
+    frame.columnconfigure(0, weight=1)
+    frame.columnconfigure(1, weight=1)
+    
+    label1 = tk.Label(root, text="Linear regression")
+    label1.grid(column=0, row = 0, columnspan = 4)
+    
+    label1 = tk.Label(root, text="Please provide numeric values:")
+    label1.grid(column=0, row = 1, columnspan = 2)
+    
+    x_label = tk.Label(root, text="X")
+    x_label.grid(column=0, row = 2)
+    y_label = tk.Label(root, text="Y")
+    y_label.grid(column=1, row = 2)
+    
+    r = 0
+    for i in range(10):
+        frame.rowconfigure(r, weight=1)
+        globals()[f"x{i + 1}"] = ttk.Entry(frame)
+        globals()[f"x{i + 1}"].grid(row = r, column = 0)
+        globals()[f"y{i + 1}"] = ttk.Entry(frame)
+        globals()[f"y{i + 1}"].grid(row = r, column = 1)
+        r += 1
+    
+    frame.grid(column = 0, row = 3, columnspan = 2, sticky = "N")
+    
+    global more
+    more_btn = tk.Button(root, text="I have more values", command=lambda: more())
+    more_btn.grid(column=0, row = 4, columnspan = 2, sticky = "N")
+    
+    global calculate
+    calculate_btn = tk.Button(root, text="Calculate", command=lambda: get_data_from_widgets())
+    calculate_btn.grid(column=0, row = 5, columnspan = 2)
+    
+    global learn
+    learn_btn = tk.Button(root, text="Learn about linear regression", command=lambda: learn())
+    learn_btn.grid(column=0, row = 6, columnspan = 2)
 
-frame = ttk.Frame(root)
-frame.columnconfigure(0, weight=1)
-frame.columnconfigure(1, weight=1)
-
-label1 = tk.Label(root, text="Linear regression")
-label1.grid(column=0, row = 0, columnspan = 4)
-
-label1 = tk.Label(root, text="Please provide numeric values:")
-label1.grid(column=0, row = 1, columnspan = 2)
-
-x_label = tk.Label(root, text="X")
-x_label.grid(column=0, row = 2)
-y_label = tk.Label(root, text="Y")
-y_label.grid(column=1, row = 2)
-
-r = 0
-for i in range(10):
-    frame.rowconfigure(r, weight=1)
-    globals()[f"x{i + 1}"] = ttk.Entry(frame)
-    globals()[f"x{i + 1}"].grid(row = r, column = 0)
-    globals()[f"y{i + 1}"] = ttk.Entry(frame)
-    globals()[f"y{i + 1}"].grid(row = r, column = 1)
-    r += 1
-
-frame.grid(column = 0, row = 3, columnspan = 2, sticky = "N")
-
-more = tk.Button(root, text="I have more values", command=lambda: more())
-more.grid(column=0, row = 4, columnspan = 2, sticky = "N")
-
-calculate = tk.Button(root, text="Calculate", command=lambda: get_data_from_widgets())
-calculate.grid(column=0, row = 5, columnspan = 2)
-
-learn = tk.Button(root, text="Learn about linear regression", command=lambda: learn())
-learn.grid(column=0, row = 6, columnspan = 2)
-
+main_view()
 
 def get_data_from_widgets():
     x_list = []
@@ -71,15 +77,20 @@ def get_data_from_widgets():
             try:
                 float(globals()[f"x{i + 1}"].get())
                 float(globals()[f"y{i + 1}"].get())
-                x_list.append(globals()[f"x{i + 1}"].get())
-                y_list.append(globals()[f"y{i + 1}"].get())
+                x_list.append(float(globals()[f"x{i + 1}"].get()))
+                y_list.append(float(globals()[f"y{i + 1}"].get()))
             except:
                 tk.messagebox.showinfo(message="All provided values should be numeric.")
                 return
-            
-    x_list = np.array(x_list).reshape((-1, 1))
-    y_list = np.array(y_list)
-    calculate(x_list, y_list)
+    
+    if len(x_list) > 1:
+        print(x_list)
+        print(y_list)
+        x_list = np.array(x_list).reshape((-1, 1))
+        y_list = np.array(y_list)
+        calculate(x_list, y_list)
+    else:
+        tk.messagebox.showinfo(title = "X, Y values are missing", message="Please provide at least two pairs of values.")
 
 
 def more():
@@ -151,6 +162,7 @@ def calculate(x, y):
     fig = Figure(figsize = (6, 4))
     a = fig.add_subplot(111)
     a.scatter(x, y) 
+    a.plot(x, y_pred, color = 'red')
     canvas = FigureCanvasTkAgg(fig, master = root)  
     canvas.get_tk_widget().grid(row = 1)
     canvas.draw()
@@ -167,15 +179,22 @@ def calculate(x, y):
     back = tk.Button(root, text="Go back", command=lambda: back())
     back.grid(row = 6)
     
-    def back():
-        pass
-    
     print("r_sq: " + str(r_sq))
     print("b0: " + str(b0))
     print("b1: " + str(b1))
     print("y_pred: " + str(y_pred))
 
+
+    def back():
+        for widgets in root.winfo_children():
+            widgets.destroy()
+        main_view()
+    
+    
 def learn():
-    pass
+    for widgets in root.winfo_children():
+            widgets.destroy()
+    main_view()
+    
 
 root.mainloop()
