@@ -28,6 +28,7 @@ def main_view():
     root.rowconfigure(4, weight=1)
     root.rowconfigure(5, weight=1)
     root.rowconfigure(6, weight=4)
+    root.rowconfigure(7, weight=1)
     
     frame = ttk.Frame(root)
     frame.columnconfigure(0, weight=1)
@@ -66,6 +67,9 @@ def main_view():
     global learn
     learn_btn = tk.Button(root, text="Learn about linear regression", command=lambda: learn())
     learn_btn.grid(column=0, row = 6, columnspan = 2)
+    
+    credit_label = tk.Label(root, text="Created by Adam Kotecki", font = ('TkDefaultFont', 8))
+    credit_label.grid(column=0, row = 7, columnspan = 2)
 
 main_view()
 
@@ -163,6 +167,7 @@ def calculate(x, y):
     a = fig.add_subplot(111)
     a.scatter(x, y) 
     a.plot(x, y_pred, color = 'red')
+    a.title.set_text("Linear regression")
     canvas = FigureCanvasTkAgg(fig, master = root)  
     canvas.get_tk_widget().grid(row = 1)
     canvas.draw()
@@ -173,28 +178,50 @@ def calculate(x, y):
     label_b0 = tk.Label(root, text="Intercept: " + str(b0))
     label_b0.grid(row = 3)
     
-    label_b1 = tk.Label(root, text="Intercept: " + str(b1))
+    label_b1 = tk.Label(root, text="Slope: " + str(b1))
     label_b1.grid(row = 4)
     
-    back = tk.Button(root, text="Go back", command=lambda: back())
-    back.grid(row = 6)
+    back_btn = tk.Button(root, text="Go back", command=lambda: back())
+    back_btn.grid(row = 6)
     
-    print("r_sq: " + str(r_sq))
-    print("b0: " + str(b0))
-    print("b1: " + str(b1))
-    print("y_pred: " + str(y_pred))
-
-
-    def back():
-        for widgets in root.winfo_children():
-            widgets.destroy()
-        main_view()
+def back():
+    for widgets in root.winfo_children():
+        widgets.destroy()
+    main_view()
     
     
 def learn():
     for widgets in root.winfo_children():
             widgets.destroy()
-    main_view()
+            
+    root.rowconfigure(0, weight=1)
+    root.rowconfigure(1, weight=1)
+    root.rowconfigure(2, weight=1)
+    root.rowconfigure(3, weight=1)
+    root.rowconfigure(4, weight=1)
+    root.rowconfigure(5, weight=1)
+    root.rowconfigure(6, weight=1)
     
-
+    message1 = tk.Message(width = 350, text = "About linear regression")
+    message1.grid(row = 1, columnspan = 2)
+    
+    message2 = tk.Message(width = 350, text = "Linear regression is a machine learning algorithm that provides a linear relationship between an independent variable (x) and a dependent variable (y) to predict the outputs of future inputs.\n\nIt is also used in data science to determine 'if' and 'to what extent' some phenomenon influences the other. For example, you can examine the dependence of housing prices on distance to the city center. In this case, prices are responses and distances are regressors.")
+    message2.grid(row = 2, columnspan = 2)
+    
+    message4 = tk.Message(width = 350, text = "Model takes the following form:")
+    message4.grid(row = 3, columnspan = 2)
+    
+    message4 = tk.Message(width = 350, text = "y = 𝛽₀ + 𝛽₁𝑥₁ + ⋯ + 𝛽ᵣ𝑥ᵣ + e", font = ("TkDefaultFont", 12))
+    message4.grid(row = 4, columnspan = 2)
+    
+    message6 = tk.Message(width = 350, text = "Where:\n\n𝛽₀ - Intercept - the mean value of the response variable when x = 0. In some cases, it makes sense to interpret this value but not always.\n\n𝛽₁ - Slope - the average change in the response variable for a one unit increase in x.\n\ne is the random error.")
+    message6.grid(row = 5, columnspan = 2)
+    
+    message5 = tk.Message(width = 350, text = "Once you've built your linear regression model, you can evaluate it using the coefficient of determination (R²), which measures how well a model predicts an outcome. R-squared values range from 0 to 1. The better a model is, the closer this measure will be to 1.")
+    message5.grid(row = 6, columnspan = 2)
+    
+    back_btn = tk.Button(root, text="Go back", command=lambda: back())
+    back_btn.grid(row = 7, columnspan = 2)
+    
+    
 root.mainloop()
