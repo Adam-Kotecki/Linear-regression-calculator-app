@@ -144,9 +144,9 @@ def get_data_from_xlsx():
 def calculate(x, y):
     model = LinearRegression()
     model.fit(x, y)
-    r_sq = model.score(x, y)
-    b0 = model.intercept_
-    b1 = model.coef_
+    r_sq = round(model.score(x, y), 4)
+    b0 = round(model.intercept_, 4)
+    b1 = round(model.coef_[0], 4)
     y_pred = b0 + b1 * x
     
     for widgets in root.winfo_children():
@@ -172,17 +172,33 @@ def calculate(x, y):
     canvas.get_tk_widget().grid(row = 1)
     canvas.draw()
     
-    label_R2 = tk.Label(root, text="Coefficient of determination: " + str(r_sq))
-    label_R2.grid(row = 2)
+    text_R2 = tk.Text(root, height = 1, bg = "SystemButtonFace")
+    text_R2.insert(1.0, " Coefficient of determination: " + str(r_sq))
+    text_R2.configure(state = "disabled")
+    text_R2.grid(row = 2)
     
-    label_b0 = tk.Label(root, text="Intercept: " + str(b0))
-    label_b0.grid(row = 3)
+    text_b0 = tk.Text(root, height = 1, bg = "SystemButtonFace")
+    text_b0.insert(1.0, " Intercept: " + str(b0))
+    text_b0.configure(state = "disabled")
+    text_b0.grid(row = 3)
     
-    label_b1 = tk.Label(root, text="Slope: " + str(b1))
-    label_b1.grid(row = 4)
+    text_b1 = tk.Text(root, height = 1, bg = "SystemButtonFace")
+    text_b1.insert(1.0, " Slope: " + str(b1))
+    text_b1.configure(state = "disabled")
+    text_b1.grid(row = 4)
+    
+    if b0 > 0:
+        equation = "Y = " + str(b1) + " * X " + "+ " + str(b0)
+    else:
+        equation = "Y = " + str(b1) + " * X " + str(b0)
+    
+    text_eq = tk.Text(root, height = 1, bg = "SystemButtonFace")
+    text_eq.insert(1.0, " Equation: " + equation)
+    text_eq.configure(state = "disabled")
+    text_eq.grid(row = 5)
     
     back_btn = tk.Button(root, text="Go back", command=lambda: back())
-    back_btn.grid(row = 6)
+    back_btn.grid(row = 7)
     
 def back():
     for widgets in root.winfo_children():
